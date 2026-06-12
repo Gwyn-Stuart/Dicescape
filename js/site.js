@@ -2,7 +2,7 @@
 // BLOG CONFIG: paste the published Google Sheet CSV link between the
 // quotes below. See the comment at the top of blog.html for setup steps.
 // =====================================================================
-const SHEET_CSV_URL = '';
+const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTOcI6_wGjjyyAF2ms9sAegQIxzr1AzMYgtb5PFdxewE-eGD0Vk0KsXeAxIiXuBTJav36wPzEQ72eMc/pub?gid=0&single=true&output=csv';
 
 // ---------- Scroll reveal ----------
 const io = new IntersectionObserver(entries => {
