@@ -80,52 +80,90 @@ function escapeHTML(s){
   return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
-function renderPosts(posts){
+function slugify(title){
+  return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'post';
+}
+
+// Assign a unique slug to every post (duplicate titles get -2, -3, ...)
+function withSlugs(posts){
+  const seen = {};
+  return posts.map(p => {
+    let slug = slugify(p.title);
+    if (seen[slug]){ seen[slug]++; slug = slug + '-' + seen[slug]; }
+    else seen[slug] = 1;
+    return Object.assign({}, p, { slug });
+  });
+}
+
+function excerpt(body, max){
+  const flat = body.replace(/\s+/g, ' ').trim();
+  if (flat.length <= max) return flat;
+  return flat.slice(0, max).replace(/\s+\S*$/, '') + '\u2026';
+}
+
+function renderList(posts){
   const list = document.getElementById('blog-list');
   if (!posts.length){
     list.innerHTML = '<p class="blog__empty">No posts yet. The dice are still rolling.</p>';
     return;
   }
   list.innerHTML = posts.map(p => {
-    const safeLink = p.link && /^https?:\/\//i.test(p.link.trim()) ? p.link.trim() : '';
-    const link = safeLink
-      ? '<a class="post__link" href="' + escapeHTML(safeLink) + '" target="_blank" rel="noopener">' +
-        escapeHTML(p.linkText && p.linkText.trim() ? p.linkText.trim() : 'Read more') + ' &rarr;</a>'
-      : '';
-    const body = escapeHTML(p.body).replace(/\n+/g, '</p><p class="post__body">');
     return '<article class="post">' +
       (p.date ? '<p class="post__date">' + escapeHTML(p.date) + '</p>' : '') +
-      '<h3 class="post__title">' + escapeHTML(p.title) + '</h3>' +
-      '<p class="post__body">' + body + '</p>' +
-      link +
+      '<h3 class="post__title"><a href="post.html?p=' + encodeURIComponent(p.slug) + '">' + escapeHTML(p.title) + '</a></h3>' +
+      '<p class="post__body">' + escapeHTML(excerpt(p.body, 180)) + '</p>' +
+      '<a class="post__link" href="post.html?p=' + encodeURIComponent(p.slug) + '">Read post &rarr;</a>' +
     '</article>';
   }).join('');
 }
 
-async function loadBlog(){
-  const list = document.getElementById('blog-list');
-  if (!list) return;
-  if (!SHEET_CSV_URL){
-    list.innerHTML = '<p class="blog__empty">No posts yet. The dice are still rolling.</p>';
+function renderSingle(posts){
+  const el = document.getElementById('post-content');
+  const slug = new URLSearchParams(location.search).get('p');
+  const post = posts.find(p => p.slug === slug);
+  if (!post){
+    el.innerHTML = '<p class="blog__empty">That post could not be found. It may have been renamed or removed.</p>';
     return;
   }
+  document.title = post.title + ' | Dicescape';
+  const safeLink = post.link && /^https?:\/\//i.test(post.link.trim()) ? post.link.trim() : '';
+  const link = safeLink
+    ? '<a class="post__link" href="' + escapeHTML(safeLink) + '" target="_blank" rel="noopener">' +
+      escapeHTML(post.linkText && post.linkText.trim() ? post.linkText.trim() : 'Read more') + ' &rarr;</a>'
+    : '';
+  const body = escapeHTML(post.body).replace(/\n+/g, '</p><p class="post__body">');
+  el.innerHTML = '<article class="post">' +
+    (post.date ? '<p class="post__date">' + escapeHTML(post.date) + '</p>' : '') +
+    '<h1 class="post__title">' + escapeHTML(post.title) + '</h1>' +
+    '<p class="post__body">' + body + '</p>' +
+    link +
+  '</article>';
+}
+
+async function loadBlog(){
+  const list = document.getElementById('blog-list');
+  const single = document.getElementById('post-content');
+  if (!list && !single) return;
+  const target = list || single;
+  const fail = msg => { target.innerHTML = '<p class="blog__empty">' + msg + '</p>'; };
+  if (!SHEET_CSV_URL){ fail('No posts yet. The dice are still rolling.'); return; }
   try {
     const res = await fetch(SHEET_CSV_URL);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const rows = parseCSV(await res.text());
-    if (rows.length < 2){ renderPosts([]); return; }
-    const headers = rows[0].map(h => h.trim().toLowerCase());
+    const headers = rows.length ? rows[0].map(h => h.trim().toLowerCase()) : [];
     const col = name => headers.indexOf(name);
-    const posts = rows.slice(1).map(r => ({
+    const posts = withSlugs(rows.slice(1).map(r => ({
       date: (r[col('date')] || '').trim(),
       title: (r[col('title')] || '').trim(),
       body: (r[col('body')] || '').trim(),
       link: r[col('link')] || '',
       linkText: r[col('linktext')] || '',
-    })).filter(p => p.title);
-    renderPosts(posts);
+    })).filter(p => p.title));
+    if (list) renderList(posts);
+    else renderSingle(posts);
   } catch (err){
-    list.innerHTML = '<p class="blog__empty">Posts could not load right now. Try refreshing the page.</p>';
+    fail('Posts could not load right now. Try refreshing the page.');
   }
 }
 loadBlog();
