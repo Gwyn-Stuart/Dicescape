@@ -148,7 +148,7 @@ async function loadBlog(){
   const fail = msg => { target.innerHTML = '<p class="blog__empty">' + msg + '</p>'; };
   if (!SHEET_CSV_URL){ fail('No posts yet. The dice are still rolling.'); return; }
   try {
-    const res = await fetch(SHEET_CSV_URL);
+    const res = await fetch(SHEET_CSV_URL, { cache: 'no-store' });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const rows = parseCSV(await res.text());
     const headers = rows.length ? rows[0].map(h => h.trim().toLowerCase()) : [];
