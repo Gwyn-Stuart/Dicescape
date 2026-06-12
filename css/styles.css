@@ -317,6 +317,18 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 }
 .post__link:hover,.post__link:focus-visible{text-decoration:underline}
 .blog__empty{text-align:center;color:var(--parchment-dim);padding:2rem 0}
+.post__title a{color:inherit;text-decoration:none;transition:color .2s}
+.post__title a:hover,.post__title a:focus-visible{color:var(--gold)}
+.post-page .post{border:0;padding:0}
+.post-page .post__title{font-size:clamp(1.7rem,4.5vw,2.4rem);margin-bottom:1rem}
+.post-page .post__body{font-size:1.05rem}
+.post-page .post__body + .post__body{margin-top:1rem}
+.back-link{
+  display:inline-block;margin-bottom:2.2rem;
+  color:var(--parchment-dim);text-decoration:none;font-size:.82rem;
+  letter-spacing:.12em;text-transform:uppercase;font-weight:500;transition:color .2s;
+}
+.back-link:hover,.back-link:focus-visible{color:var(--gold)}
 
 /* scroll reveal */
 .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
