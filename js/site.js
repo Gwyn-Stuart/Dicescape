@@ -167,3 +167,102 @@ async function loadBlog(){
   }
 }
 loadBlog();
+
+
+// =====================================================================
+// EPISODES: reads the Sirens of Sundown feed via the Cloudflare Worker.
+// Paste your Worker URL between the quotes below.
+// =====================================================================
+const FEED_WORKER_URL = 'https://sirens-feed.stuartgwyn-e71.workers.dev/';
+const ACAST_SHOW_ID = '69d41a69b76468caac7c4c1c';
+
+function epDate(raw){
+  const d = new Date(raw);
+  if (isNaN(d)) return raw || '';
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+function epExcerpt(text, max){
+  const flat = (text || '').replace(/\s+/g, ' ').trim();
+  if (flat.length <= max) return flat;
+  return flat.slice(0, max).replace(/\s+\S*$/, '') + '\u2026';
+}
+
+// Pull a "Content Warnings:" block out of the notes, if present.
+function splitContentWarnings(desc){
+  if (!desc) return { notes: '', warnings: '' };
+  const re = /content warnings?:\s*/i;
+  const m = desc.match(re);
+  if (!m) return { notes: desc, warnings: '' };
+  const idx = m.index;
+  const notes = desc.slice(0, idx).trim();
+  let warnings = desc.slice(idx + m[0].length).trim();
+  // Cut the warnings off before the boilerplate "Listener discretion" / "New episodes" tail
+  warnings = warnings.split(/listener discretion|new episodes of/i)[0].trim();
+  return { notes: notes || desc, warnings };
+}
+
+function renderEpisodeList(data){
+  const list = document.getElementById('episode-list');
+  if (!data || !data.episodes || !data.episodes.length){
+    list.innerHTML = '<p class="blog__empty">Episodes could not load right now. Try refreshing, or <a class="post__link" href="https://open.spotify.com/show/4d62q4Zbk4rUYOLdlCB3pd" target="_blank" rel="noopener">listen on Spotify</a>.</p>';
+    return;
+  }
+  list.innerHTML = data.episodes.map(ep => {
+    const num = ep.episodeNumber ? '<span class="ep-card__num">Ep ' + escapeHTML(ep.episodeNumber) + '</span>' : '';
+    const { notes } = splitContentWarnings(ep.description);
+    return '<a class="ep-card" href="episode.html?ep=' + encodeURIComponent(ep.id) + '">' +
+      '<div class="ep-card__meta">' + num + '<span>' + escapeHTML(epDate(ep.date)) + '</span>' +
+        (ep.duration ? '<span>' + escapeHTML(ep.duration) + '</span>' : '') + '</div>' +
+      '<h2 class="ep-card__title">' + escapeHTML(ep.title) + '</h2>' +
+      '<p class="ep-card__excerpt">' + escapeHTML(epExcerpt(notes, 170)) + '</p>' +
+      '<span class="ep-card__cta">Listen &amp; read more &rarr;</span>' +
+    '</a>';
+  }).join('');
+}
+
+function renderSingleEpisode(data){
+  const el = document.getElementById('episode-content');
+  const id = new URLSearchParams(location.search).get('ep');
+  const ep = data && data.episodes && data.episodes.find(e => e.id === id);
+  if (!ep){
+    el.innerHTML = '<p class="blog__empty">That episode could not be found. <a class="post__link" href="episodes.html">See all episodes &rarr;</a></p>';
+    return;
+  }
+  document.title = ep.title + ' | Sirens of Sundown';
+  const { notes, warnings } = splitContentWarnings(ep.description);
+  const num = ep.episodeNumber ? '<span class="ep-card__num">Ep ' + escapeHTML(ep.episodeNumber) + '</span>' : '';
+  // Acast embeds a single episode by appending the episode id to the show embed URL.
+  const embedId = ep.acastId ? ('/' + encodeURIComponent(ep.acastId)) : '';
+  const notesHTML = escapeHTML(notes).split(/\n{2,}/).map(p => '<p>' + p + '</p>').join('');
+  const cwHTML = warnings
+    ? '<div class="episode__cw"><strong>Content Warnings</strong>' + escapeHTML(warnings) + '</div>'
+    : '';
+  el.innerHTML =
+    '<div class="episode__meta">' + num + '<span>' + escapeHTML(epDate(ep.date)) + '</span>' +
+      (ep.duration ? '<span>' + escapeHTML(ep.duration) + '</span>' : '') + '</div>' +
+    '<h1 class="episode__title">' + escapeHTML(ep.title) + '</h1>' +
+    '<div class="episode__player"><iframe src="https://embed.acast.com/' + ACAST_SHOW_ID + embedId + '" title="' + escapeHTML(ep.title) + '" loading="lazy" allow="autoplay"></iframe></div>' +
+    '<div class="episode__notes">' + notesHTML + '</div>' +
+    cwHTML;
+}
+
+async function loadEpisodes(){
+  const list = document.getElementById('episode-list');
+  const single = document.getElementById('episode-content');
+  if (!list && !single) return;
+  const target = list || single;
+  const fail = msg => { target.innerHTML = '<p class="blog__empty">' + msg + '</p>'; };
+  if (!FEED_WORKER_URL){ fail('Episode feed is not configured yet.'); return; }
+  try {
+    const res = await fetch(FEED_WORKER_URL, { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    if (list) renderEpisodeList(data);
+    else renderSingleEpisode(data);
+  } catch (err){
+    fail('Episodes could not load right now. Try refreshing the page.');
+  }
+}
+loadEpisodes();

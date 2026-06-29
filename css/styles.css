@@ -330,6 +330,88 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 }
 .back-link:hover,.back-link:focus-visible{color:var(--gold)}
 
+/* ---------- EPISODES ---------- */
+.episodes{
+  padding:9rem 1.5rem 5rem;
+  background:
+    radial-gradient(ellipse 90% 60% at 50% 0%, rgba(212,139,48,.12), transparent 65%),
+    var(--ink);
+}
+.episodes__inner{max-width:820px;margin:0 auto}
+.episodes__eyebrow{
+  font-size:.72rem;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);
+  font-weight:600;margin-bottom:.8rem;text-align:center;
+}
+.episodes__title{
+  font-family:'Rye',serif;
+  font-size:clamp(1.9rem,5vw,3rem);text-align:center;margin-bottom:.7rem;color:var(--parchment);
+}
+.episodes__sub{text-align:center;color:var(--parchment-dim);margin-bottom:3rem;font-size:1rem}
+.ep-card{
+  display:block;text-decoration:none;
+  padding:1.6rem 0;border-top:1px solid var(--line);
+  transition:opacity .2s;
+}
+.ep-card:last-child{border-bottom:1px solid var(--line)}
+.ep-card:hover{opacity:.92}
+.ep-card__meta{
+  display:flex;gap:.8rem;align-items:center;flex-wrap:wrap;
+  font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--gold);font-weight:600;margin-bottom:.5rem;
+}
+.ep-card__num{
+  display:inline-block;padding:.15rem .55rem;border-radius:999px;
+  border:1px solid var(--gold);font-size:.66rem;
+}
+.ep-card__title{
+  font-family:'Fraunces',serif;font-weight:600;
+  font-size:1.3rem;line-height:1.25;margin-bottom:.5rem;color:var(--parchment);
+  transition:color .2s;
+}
+.ep-card:hover .ep-card__title{color:var(--gold)}
+.ep-card__excerpt{color:var(--parchment-dim);font-size:.95rem}
+.ep-card__cta{
+  display:inline-block;margin-top:.7rem;
+  color:var(--gold);font-weight:500;font-size:.85rem;letter-spacing:.04em;
+}
+
+/* ---------- SINGLE EPISODE ---------- */
+.episode{
+  padding:9rem 1.5rem 5rem;
+  background:
+    radial-gradient(ellipse 90% 60% at 50% 0%, rgba(212,139,48,.12), transparent 65%),
+    var(--ink);
+}
+.episode__inner{max-width:760px;margin:0 auto}
+.episode__back{
+  display:inline-block;margin-bottom:2.2rem;
+  color:var(--parchment-dim);text-decoration:none;font-size:.82rem;
+  letter-spacing:.12em;text-transform:uppercase;font-weight:500;transition:color .2s;
+}
+.episode__back:hover,.episode__back:focus-visible{color:var(--gold)}
+.episode__meta{
+  display:flex;gap:.8rem;align-items:center;flex-wrap:wrap;
+  font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--gold);font-weight:600;margin-bottom:1rem;
+}
+.episode__title{
+  font-family:'Fraunces',serif;font-weight:800;
+  font-size:clamp(1.7rem,4.5vw,2.6rem);line-height:1.15;margin-bottom:1.6rem;
+}
+.episode__player{
+  border:1px solid var(--line);border-radius:16px;overflow:hidden;
+  background:rgba(242,235,224,.04);margin-bottom:2rem;
+}
+.episode__player iframe{display:block;width:100%;height:180px;border:0}
+.episode__notes{color:var(--parchment-dim);font-size:1.02rem}
+.episode__notes p{margin-bottom:1rem}
+.episode__cw{
+  margin-top:2rem;padding:1.2rem 1.4rem;border-radius:12px;
+  border:1px solid rgba(212,139,48,.3);background:rgba(212,139,48,.06);
+  font-size:.9rem;color:var(--parchment-dim);line-height:1.5;
+}
+.episode__cw strong{color:var(--gold);display:block;margin-bottom:.4rem;font-size:.74rem;letter-spacing:.16em;text-transform:uppercase}
+
 /* scroll reveal */
 .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
 .reveal.in{opacity:1;transform:none}
