@@ -68,7 +68,7 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
     var(--ink);
 }
 .hero__stars{position:absolute;inset:0;pointer-events:none;opacity:.55}
-.hero__logo{width:min(420px,72vw);margin-bottom:2.5rem;position:relative;filter:drop-shadow(0 6px 30px rgba(0,0,0,.5))}
+.hero__logo{width:min(525px,80vw);margin-bottom:2.5rem;position:relative;filter:drop-shadow(0 6px 30px rgba(0,0,0,.5))}
 .hero h1{
   font-family:'Fraunces',serif;font-weight:800;
   font-size:clamp(2.6rem,8vw,5.6rem);
