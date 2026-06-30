@@ -270,11 +270,11 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 
 /* listen strip */
 .listen{
-  margin-top:3.4rem;padding:1.6rem 1.5rem;border-radius:16px;
+  margin-top:3.4rem;padding:1.6rem 2.2rem;border-radius:16px;
   border:1px solid var(--line);
   background:rgba(242,235,224,.04);
   display:flex;align-items:center;justify-content:center;gap:.9rem;flex-wrap:wrap;
-  max-width:1060px;margin-left:auto;margin-right:auto;
+  width:fit-content;max-width:100%;margin-left:auto;margin-right:auto;
 }
 .listen__label{font-size:.74rem;letter-spacing:.26em;text-transform:uppercase;color:var(--parchment-dim);font-weight:600;width:100%;text-align:center;margin-bottom:.2rem}
 .pill{
