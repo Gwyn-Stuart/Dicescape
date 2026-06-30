@@ -284,6 +284,24 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 }
 .pill:hover,.pill:focus-visible{border-color:var(--accent);color:var(--accent);transform:translateY(-2px)}
 
+/* circular platform logo buttons */
+.listen__icons{display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap;width:100%}
+.plat{
+  width:54px;height:54px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--line);background:rgba(242,235,224,.04);
+  transition:border-color .2s,transform .2s,background .2s;
+}
+.plat:hover,.plat:focus-visible{
+  border-color:var(--accent);transform:translateY(-3px);
+  background:rgba(242,235,224,.08);
+}
+.plat img{
+  width:30px;height:30px;object-fit:contain;
+  /* charcoal-on-white tiles (Amazon) get a rounded crop so they sit cleanly in the circle */
+  border-radius:7px;
+}
+
 /* ---------- BLOG PAGE ---------- */
 .blog{
   padding:9rem 1.5rem 5rem;
