@@ -369,3 +369,26 @@ async function loadEpisodes(){
   }
 }
 loadEpisodes();
+
+
+// ---------- Mobile nav toggle ----------
+(function(){
+  const nav = document.querySelector('.nav');
+  const links = document.querySelector('.nav__links');
+  if (!nav || !links) return;
+  const btn = document.createElement('button');
+  btn.className = 'nav__toggle';
+  btn.setAttribute('aria-label', 'Open menu');
+  btn.setAttribute('aria-expanded', 'false');
+  btn.innerHTML = '<span></span><span></span><span></span>';
+  nav.appendChild(btn);
+
+  const setOpen = (open) => {
+    nav.classList.toggle('nav--open', open);
+    btn.setAttribute('aria-expanded', String(open));
+    btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  };
+  btn.addEventListener('click', () => setOpen(!nav.classList.contains('nav--open')));
+  links.addEventListener('click', (e) => { if (e.target.closest('a')) setOpen(false); });
+  window.addEventListener('resize', () => { if (window.innerWidth > 900) setOpen(false); });
+})();
