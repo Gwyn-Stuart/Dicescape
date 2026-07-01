@@ -105,12 +105,10 @@ function blocksToHTML(blocks){
       let text = escapeHTML(span.text || '');
       if (!text) return '';
       const active = span.marks || [];
-      // wrap decorators
       if (active.includes('strong')) text = '<strong>' + text + '</strong>';
       if (active.includes('em')) text = '<em>' + text + '</em>';
-      // wrap link annotations
-      active.forEach(m => {
-        const def = marks.find(d => d._key === m);
+      active.forEach(mk => {
+        const def = marks.find(d => d._key === mk);
         if (def && def._type === 'link' && def.href){
           const safe = /^(https?:|mailto:)/i.test(def.href) ? def.href : '#';
           text = '<a href="' + escapeHTML(safe) + '" target="_blank" rel="noopener">' + text + '</a>';
@@ -121,9 +119,35 @@ function blocksToHTML(blocks){
   };
 
   blocks.forEach(block => {
-    if (!block || block._type !== 'block'){ return; }
+    if (!block) return;
+
+    // Inline image block
+    if (block._type === 'image' && block.asset && block.asset._ref){
+      flushList();
+      const src = sanityImageUrl(block.asset._ref, 1000);
+      if (src){
+        const alt = escapeHTML(block.alt || '');
+        const cap = block.caption ? '<figcaption class="post__cap">' + escapeHTML(block.caption) + '</figcaption>' : '';
+        out.push('<figure class="post__figure"><img src="' + escapeHTML(src) + '" alt="' + alt + '" loading="lazy">' + cap + '</figure>');
+      }
+      return;
+    }
+
+    // YouTube embed block
+    if (block._type === 'youtube' && block.url){
+      flushList();
+      const id = youtubeId(block.url);
+      if (id){
+        out.push('<div class="post__video"><iframe src="https://www.youtube-nocookie.com/embed/' + encodeURIComponent(id) +
+          '" title="YouTube video" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>');
+      }
+      return;
+    }
+
+    // Text block
+    if (block._type !== 'block'){ return; }
     const inner = renderChildren(block);
-    const listItem = block.listItem; // 'bullet' | 'number' | undefined
+    const listItem = block.listItem;
 
     if (listItem){
       const wantType = listItem === 'number' ? 'ol' : 'ul';
@@ -137,10 +161,37 @@ function blocksToHTML(blocks){
     const style = block.style || 'normal';
     if (style === 'h3') out.push('<h3 class="post__h">' + inner + '</h3>');
     else if (style === 'blockquote') out.push('<blockquote class="post__quote">' + inner + '</blockquote>');
-    else out.push('<p class="post__body">' + inner + '</p>');
+    else if (inner) out.push('<p class="post__body">' + inner + '</p>');
   });
   flushList();
   return out.join('');
+}
+
+// Build a Sanity CDN image URL from an asset reference like
+// "image-abc123-1200x800-jpg".
+function sanityImageUrl(ref, width){
+  const m = /^image-([a-f0-9]+)-(\d+x\d+)-(\w+)$/.exec(ref);
+  if (!m) return '';
+  const [, id, dims, ext] = m;
+  let url = 'https://cdn.sanity.io/images/' + SANITY_PROJECT_ID + '/' + SANITY_DATASET +
+    '/' + id + '-' + dims + '.' + ext;
+  if (width) url += '?w=' + width + '&auto=format&fit=max';
+  return url;
+}
+
+// Extract the video id from any common YouTube URL form.
+function youtubeId(url){
+  const patterns = [
+    /[?&]v=([\w-]{11})/,
+    /youtu\.be\/([\w-]{11})/,
+    /youtube\.com\/embed\/([\w-]{11})/,
+    /youtube\.com\/shorts\/([\w-]{11})/,
+  ];
+  for (const re of patterns){
+    const m = url.match(re);
+    if (m) return m[1];
+  }
+  return '';
 }
 
 function excerpt(text, max){
@@ -203,7 +254,7 @@ async function loadBlog(){
   const fail = msg => { target.innerHTML = '<p class="blog__empty">' + msg + '</p>'; };
 
   // GROQ query: published posts (no drafts), newest first, with the fields we need.
-  const query = '*[_type == "post" && !(_id in path("drafts.**"))]|order(date desc){title, date, body, link}';
+  const query = '*[_type == "post" && !(_id in path("drafts.**"))]|order(date desc){title, date, body[]{..., _type == "image" => {..., asset}}, link}';
   const url = 'https://' + SANITY_PROJECT_ID + '.apicdn.sanity.io/v2023-05-03/data/query/' +
     SANITY_DATASET + '?query=' + encodeURIComponent(query);
 
