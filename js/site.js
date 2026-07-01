@@ -1,8 +1,9 @@
 // =====================================================================
-// BLOG CONFIG: paste the published Google Sheet CSV link between the
-// quotes below. See the comment at the top of blog.html for setup steps.
+// BLOG CONFIG: posts are managed in Sanity (dicescape.sanity.studio).
+// These identify the Sanity project the blog reads from.
 // =====================================================================
-const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTOcI6_wGjjyyAF2ms9sAegQIxzr1AzMYgtb5PFdxewE-eGD0Vk0KsXeAxIiXuBTJav36wPzEQ72eMc/pub?gid=0&single=true&output=csv';
+const SANITY_PROJECT_ID = '6vle4o84';
+const SANITY_DATASET = 'production';
 
 // ---------- Scroll reveal ----------
 const io = new IntersectionObserver(entries => {
@@ -48,40 +49,17 @@ document.querySelectorAll('img').forEach(img => {
   else img.addEventListener('error', () => handleFail(img), { once: true });
 });
 
-// ---------- Blog (runs only on pages with a #blog-list element) ----------
-// Minimal CSV parser that handles quoted fields, commas, and line
-// breaks inside post bodies.
-function parseCSV(text){
-  const rows = []; let row = [], field = '', inQuotes = false;
-  for (let i = 0; i < text.length; i++){
-    const c = text[i];
-    if (inQuotes){
-      if (c === '"'){
-        if (text[i+1] === '"'){ field += '"'; i++; }
-        else inQuotes = false;
-      } else field += c;
-    } else {
-      if (c === '"') inQuotes = true;
-      else if (c === ','){ row.push(field); field = ''; }
-      else if (c === '\n' || c === '\r'){
-        if (c === '\r' && text[i+1] === '\n') i++;
-        row.push(field); field = '';
-        if (row.some(f => f.trim() !== '')) rows.push(row);
-        row = [];
-      } else field += c;
-    }
-  }
-  row.push(field);
-  if (row.some(f => f.trim() !== '')) rows.push(row);
-  return rows;
-}
+// ---------- Blog (runs only on blog.html / post.html) ----------
+// Posts come from Sanity. We keep escapeHTML, slugify, withSlugs, and
+// excerpt as shared helpers, and convert Sanity's rich-text "Portable
+// Text" body into safe HTML for display.
 
 function escapeHTML(s){
-  return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  return (s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
 function slugify(title){
-  return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'post';
+  return (title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'post';
 }
 
 // Assign a unique slug to every post (duplicate titles get -2, -3, ...)
@@ -95,10 +73,87 @@ function withSlugs(posts){
   });
 }
 
-function excerpt(body, max){
-  const flat = body.replace(/\s+/g, ' ').trim();
+// Turn Portable Text (array of blocks) into a plain-text string for excerpts.
+function blocksToText(blocks){
+  if (!Array.isArray(blocks)) return '';
+  return blocks
+    .filter(b => b && b._type === 'block' && Array.isArray(b.children))
+    .map(b => b.children.map(c => (c && c.text) || '').join(''))
+    .join(' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// Turn Portable Text into safe HTML (paragraphs, headings, quotes, lists,
+// bold, italic, and links). Everything is escaped as it is built.
+function blocksToHTML(blocks){
+  if (!Array.isArray(blocks)) return '';
+  const out = [];
+  let listType = null, listItems = [];
+
+  const flushList = () => {
+    if (listItems.length){
+      out.push('<' + listType + '>' + listItems.join('') + '</' + listType + '>');
+      listItems = [];
+    }
+    listType = null;
+  };
+
+  const renderChildren = (block) => {
+    const marks = (block.markDefs || []);
+    return (block.children || []).map(span => {
+      let text = escapeHTML(span.text || '');
+      if (!text) return '';
+      const active = span.marks || [];
+      // wrap decorators
+      if (active.includes('strong')) text = '<strong>' + text + '</strong>';
+      if (active.includes('em')) text = '<em>' + text + '</em>';
+      // wrap link annotations
+      active.forEach(m => {
+        const def = marks.find(d => d._key === m);
+        if (def && def._type === 'link' && def.href){
+          const safe = /^(https?:|mailto:)/i.test(def.href) ? def.href : '#';
+          text = '<a href="' + escapeHTML(safe) + '" target="_blank" rel="noopener">' + text + '</a>';
+        }
+      });
+      return text;
+    }).join('');
+  };
+
+  blocks.forEach(block => {
+    if (!block || block._type !== 'block'){ return; }
+    const inner = renderChildren(block);
+    const listItem = block.listItem; // 'bullet' | 'number' | undefined
+
+    if (listItem){
+      const wantType = listItem === 'number' ? 'ol' : 'ul';
+      if (listType && listType !== wantType) flushList();
+      listType = wantType;
+      listItems.push('<li>' + inner + '</li>');
+      return;
+    }
+    flushList();
+
+    const style = block.style || 'normal';
+    if (style === 'h3') out.push('<h3 class="post__h">' + inner + '</h3>');
+    else if (style === 'blockquote') out.push('<blockquote class="post__quote">' + inner + '</blockquote>');
+    else out.push('<p class="post__body">' + inner + '</p>');
+  });
+  flushList();
+  return out.join('');
+}
+
+function excerpt(text, max){
+  const flat = (text || '').replace(/\s+/g, ' ').trim();
   if (flat.length <= max) return flat;
   return flat.slice(0, max).replace(/\s+\S*$/, '') + '\u2026';
+}
+
+function fmtDate(raw){
+  if (!raw) return '';
+  const d = new Date(raw);
+  if (isNaN(d)) return raw;
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
 }
 
 function renderList(posts){
@@ -108,10 +163,11 @@ function renderList(posts){
     return;
   }
   list.innerHTML = posts.map(p => {
+    const text = blocksToText(p.body);
     return '<article class="post">' +
-      (p.date ? '<p class="post__date">' + escapeHTML(p.date) + '</p>' : '') +
+      (p.date ? '<p class="post__date">' + escapeHTML(fmtDate(p.date)) + '</p>' : '') +
       '<h3 class="post__title"><a href="post.html?p=' + encodeURIComponent(p.slug) + '">' + escapeHTML(p.title) + '</a></h3>' +
-      '<p class="post__body">' + escapeHTML(excerpt(p.body, 180)) + '</p>' +
+      '<p class="post__body">' + escapeHTML(excerpt(text, 180)) + '</p>' +
       '<a class="post__link" href="post.html?p=' + encodeURIComponent(p.slug) + '">Read post &rarr;</a>' +
     '</article>';
   }).join('');
@@ -126,17 +182,16 @@ function renderSingle(posts){
     return;
   }
   document.title = post.title + ' | Dicescape';
-  const safeLink = post.link && /^https?:\/\//i.test(post.link.trim()) ? post.link.trim() : '';
-  const link = safeLink
-    ? '<a class="post__link" href="' + escapeHTML(safeLink) + '" target="_blank" rel="noopener">' +
-      escapeHTML(post.linkText && post.linkText.trim() ? post.linkText.trim() : 'Read more') + ' &rarr;</a>'
+  const url = post.link && post.link.url && /^https?:\/\//i.test(post.link.url) ? post.link.url : '';
+  const linkHTML = url
+    ? '<a class="post__link" href="' + escapeHTML(url) + '" target="_blank" rel="noopener">' +
+      escapeHTML(post.link.label && post.link.label.trim() ? post.link.label.trim() : 'Read more') + ' &rarr;</a>'
     : '';
-  const body = escapeHTML(post.body).replace(/\n+/g, '</p><p class="post__body">');
   el.innerHTML = '<article class="post">' +
-    (post.date ? '<p class="post__date">' + escapeHTML(post.date) + '</p>' : '') +
+    (post.date ? '<p class="post__date">' + escapeHTML(fmtDate(post.date)) + '</p>' : '') +
     '<h1 class="post__title">' + escapeHTML(post.title) + '</h1>' +
-    '<p class="post__body">' + body + '</p>' +
-    link +
+    blocksToHTML(post.body) +
+    linkHTML +
   '</article>';
 }
 
@@ -146,20 +201,17 @@ async function loadBlog(){
   if (!list && !single) return;
   const target = list || single;
   const fail = msg => { target.innerHTML = '<p class="blog__empty">' + msg + '</p>'; };
-  if (!SHEET_CSV_URL){ fail('No posts yet. The dice are still rolling.'); return; }
+
+  // GROQ query: published posts (no drafts), newest first, with the fields we need.
+  const query = '*[_type == "post" && !(_id in path("drafts.**"))]|order(date desc){title, date, body, link}';
+  const url = 'https://' + SANITY_PROJECT_ID + '.apicdn.sanity.io/v2023-05-03/data/query/' +
+    SANITY_DATASET + '?query=' + encodeURIComponent(query);
+
   try {
-    const res = await fetch(SHEET_CSV_URL, { cache: 'no-store' });
+    const res = await fetch(url);
     if (!res.ok) throw new Error('HTTP ' + res.status);
-    const rows = parseCSV(await res.text());
-    const headers = rows.length ? rows[0].map(h => h.trim().toLowerCase()) : [];
-    const col = name => headers.indexOf(name);
-    const posts = withSlugs(rows.slice(1).map(r => ({
-      date: (r[col('date')] || '').trim(),
-      title: (r[col('title')] || '').trim(),
-      body: (r[col('body')] || '').trim(),
-      link: r[col('link')] || '',
-      linkText: r[col('linktext')] || '',
-    })).filter(p => p.title));
+    const data = await res.json();
+    const posts = withSlugs((data.result || []).filter(p => p && p.title));
     if (list) renderList(posts);
     else renderSingle(posts);
   } catch (err){

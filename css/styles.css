@@ -329,6 +329,11 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
   font-size:1.35rem;line-height:1.25;margin-bottom:.6rem;
 }
 .post__body{color:var(--parchment-dim);font-size:.98rem}
+.post__h{font-family:'Fraunces',serif;font-weight:600;font-size:1.15rem;color:var(--parchment);margin:1.4rem 0 .6rem}
+.post__quote{border-left:2px solid var(--gold);padding-left:1rem;margin:1.2rem 0;color:var(--parchment);font-style:italic}
+.post__body a,.post__quote a{color:var(--gold);text-decoration:underline}
+.post__body ul,.post__body ol,.post ul,.post ol{color:var(--parchment-dim);font-size:.98rem;margin:0 0 1rem 1.3rem}
+.post li{margin-bottom:.3rem}
 .post__link{
   display:inline-block;margin-top:.7rem;
   color:var(--gold);text-decoration:none;font-weight:500;font-size:.88rem;letter-spacing:.04em;
