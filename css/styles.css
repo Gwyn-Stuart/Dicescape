@@ -61,10 +61,11 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
     position:absolute;left:50%;transform:translateX(-50%);margin-left:0;
     gap:.6rem;
   }
-  .nav__links a,.nav__dd-btn{
+  .nav__links a,.nav__links .nav__dd-btn{
     font-size:.95rem;letter-spacing:.15em;
     padding:.55rem 1.15rem;
   }
+  .nav__links .nav__caret{font-size:.75em}
 }
 
 /* shows dropdown */
