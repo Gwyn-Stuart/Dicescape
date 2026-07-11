@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <g fill="none" stroke="#f2ebe0" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+    <!-- left bracket -->
+    <path d="M62 52 L62 148"/>
+    <path d="M62 62 L22 78 L22 122 L62 138"/>
+    <path d="M62 62 L22 122 M22 78 L62 138"/>
+    <!-- right bracket -->
+    <path d="M138 52 L138 148"/>
+    <path d="M138 62 L178 78 L178 122 L138 138"/>
+    <path d="M138 62 L178 122 M178 78 L138 138"/>
+  </g>
+  <text x="100" y="100" text-anchor="middle" dominant-baseline="central"
+        font-family="Georgia, 'Times New Roman', serif" font-weight="700"
+        font-size="44" letter-spacing="2" fill="#f2ebe0">GM</text>
+</svg>

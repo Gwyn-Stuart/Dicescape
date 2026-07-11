@@ -154,6 +154,14 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
   font-family:'Fraunces',serif;font-weight:800;
   font-size:clamp(1.8rem,4.5vw,2.8rem);text-align:center;margin-bottom:3rem;
 }
+.worlds__blurb{
+  text-align:center;color:var(--parchment-dim);font-size:1.08rem;
+  max-width:620px;margin:-1.8rem auto 3rem;
+}
+.art-credit{
+  text-align:center;font-size:.78rem;letter-spacing:.06em;
+  color:rgba(242,235,224,.45);margin-top:2.4rem;
+}
 .worlds__grid{
   display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.6rem;
 }
