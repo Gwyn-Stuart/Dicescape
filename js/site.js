@@ -392,3 +392,73 @@ loadEpisodes();
   links.addEventListener('click', (e) => { if (e.target.closest('a')) setOpen(false); });
   window.addEventListener('resize', () => { if (window.innerWidth > 900) setOpen(false); });
 })();
+
+
+// ---------- Shows dropdown ----------
+(function(){
+  const dd = document.querySelector('.nav__dd');
+  if (!dd) return;
+  const btn = dd.querySelector('.nav__dd-btn');
+  const setOpen = (open) => {
+    dd.classList.toggle('open', open);
+    btn.setAttribute('aria-expanded', String(open));
+  };
+  btn.addEventListener('click', (e) => { e.stopPropagation(); setOpen(!dd.classList.contains('open')); });
+  document.addEventListener('click', (e) => { if (!dd.contains(e.target)) setOpen(false); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
+})();
+
+// ---------- Homepage: The Latest ----------
+async function loadLatest(){
+  const epEl = document.getElementById('latest-episode');
+  const postEl = document.getElementById('latest-post');
+  if (!epEl && !postEl) return;
+
+  if (epEl){
+    try {
+      const res = await fetch(FEED_WORKER_URL, { cache: 'no-store' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      const ep = data.episodes && data.episodes[0];
+      if (!ep) throw new Error('no episodes');
+      const { notes } = splitContentWarnings(ep.description);
+      epEl.innerHTML =
+        '<p class="latest-card__eyebrow">Latest Episode &middot; Sirens of Sundown</p>' +
+        '<h3 class="latest-card__title"><a href="episode.html?ep=' + encodeURIComponent(ep.id) + '">' + escapeHTML(ep.title) + '</a></h3>' +
+        '<p class="latest-card__meta">' + escapeHTML(epDate(ep.date)) + (ep.duration ? ' &middot; ' + escapeHTML(ep.duration) : '') + '</p>' +
+        '<p class="latest-card__excerpt">' + escapeHTML(epExcerpt(notes, 140)) + '</p>' +
+        '<a class="latest-card__cta" href="episode.html?ep=' + encodeURIComponent(ep.id) + '">Listen now &rarr;</a>';
+    } catch (err){
+      epEl.innerHTML =
+        '<p class="latest-card__eyebrow">Sirens of Sundown</p>' +
+        '<h3 class="latest-card__title"><a href="episodes.html">Browse all episodes</a></h3>' +
+        '<a class="latest-card__cta" href="episodes.html">Episode archive &rarr;</a>';
+    }
+  }
+
+  if (postEl){
+    try {
+      const query = '*[_type == "post" && !(_id in path("drafts.**"))]|order(date desc){title, date, body, link}';
+      const url = 'https://' + SANITY_PROJECT_ID + '.apicdn.sanity.io/v2023-05-03/data/query/' + SANITY_DATASET + '?query=' + encodeURIComponent(query);
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      const posts = withSlugs((data.result || []).filter(p => p && p.title));
+      const post = posts[0];
+      if (!post) throw new Error('no posts');
+      const text = blocksToText(post.body);
+      postEl.innerHTML =
+        '<p class="latest-card__eyebrow">From the Blog</p>' +
+        '<h3 class="latest-card__title"><a href="post.html?p=' + encodeURIComponent(post.slug) + '">' + escapeHTML(post.title) + '</a></h3>' +
+        '<p class="latest-card__meta">' + escapeHTML(fmtDate(post.date)) + '</p>' +
+        '<p class="latest-card__excerpt">' + escapeHTML(excerpt(text, 140)) + '</p>' +
+        '<a class="latest-card__cta" href="post.html?p=' + encodeURIComponent(post.slug) + '">Read the post &rarr;</a>';
+    } catch (err){
+      postEl.innerHTML =
+        '<p class="latest-card__eyebrow">From the Blog</p>' +
+        '<h3 class="latest-card__title"><a href="blog.html">News &amp; Updates</a></h3>' +
+        '<a class="latest-card__cta" href="blog.html">Visit the blog &rarr;</a>';
+    }
+  }
+}
+loadLatest();

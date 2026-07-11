@@ -55,6 +55,39 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 .nav__links a:hover,.nav__links a:focus-visible{color:var(--parchment);background:rgba(242,235,224,.08)}
 .nav__links a.is-active{color:var(--ink);background:var(--parchment)}
 
+/* shows dropdown */
+.nav__dd{position:relative}
+.nav__dd-btn{
+  display:flex;align-items:center;gap:.35rem;
+  background:none;border:0;cursor:pointer;font-family:inherit;
+  text-decoration:none;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;
+  padding:.45rem .8rem;border-radius:999px;color:var(--parchment-dim);
+  transition:color .2s,background .2s;font-weight:500;
+}
+.nav__dd-btn:hover,.nav__dd-btn:focus-visible{color:var(--parchment);background:rgba(242,235,224,.08)}
+.nav__dd-btn.is-active{color:var(--ink);background:var(--parchment)}
+.nav__caret{font-size:.7em;transition:transform .2s}
+.nav__dd.open .nav__caret{transform:rotate(180deg)}
+.nav__dd-menu{
+  display:none;list-style:none;
+  position:absolute;top:calc(100% + .5rem);left:50%;transform:translateX(-50%);
+  min-width:220px;padding:.4rem;
+  background:rgba(14,11,20,.97);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border:1px solid var(--line);border-radius:14px;
+  box-shadow:0 14px 40px rgba(0,0,0,.5);
+}
+.nav__dd.open .nav__dd-menu{display:block}
+@media (min-width:901px){
+  .nav__dd:hover .nav__dd-menu,.nav__dd:focus-within .nav__dd-menu{display:block}
+}
+.nav__dd-menu a{
+  display:block;white-space:nowrap;border-radius:10px;
+  padding:.6rem .9rem;
+}
+
+
 /* mobile menu toggle (injected by site.js) */
 .nav__toggle{
   display:none;margin-left:auto;
@@ -85,6 +118,13 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
     padding:.4rem 0 .8rem;
   }
   .nav--open .nav__links{display:flex}
+  .nav__dd-btn{width:100%;justify-content:flex-start;padding:.85rem 1.6rem;border-radius:0;font-size:.85rem}
+  .nav__dd-menu{
+    position:static;transform:none;min-width:0;
+    border:0;border-radius:0;box-shadow:none;background:rgba(242,235,224,.03);
+    padding:0 0 .3rem;
+  }
+  .nav__dd-menu a{padding:.7rem 1.6rem .7rem 2.6rem;border-radius:0;white-space:normal}
   .nav__links a{
     display:block;padding:.85rem 1.6rem;border-radius:0;
     font-size:.85rem;
@@ -569,6 +609,45 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
   .member--feature{grid-template-columns:1fr;text-align:center;gap:1.2rem;padding:1.8rem}
   .member--feature .member__photo{max-width:210px;margin:0 auto}
 }
+
+/* ---------- HOME: THE LATEST ---------- */
+.latest{
+  padding:0 1.5rem 6rem;background:var(--ink);
+}
+.latest__inner{max-width:var(--max);margin:0 auto}
+.latest__title{
+  font-family:'Fraunces',serif;font-weight:800;
+  font-size:clamp(1.8rem,4.5vw,2.8rem);text-align:center;margin-bottom:2.4rem;
+}
+.latest__grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:1.6rem;
+  max-width:920px;margin:0 auto;
+}
+.latest-card{
+  padding:1.8rem;border-radius:18px;
+  border:1px solid var(--line);background:var(--ink-2);
+  display:flex;flex-direction:column;gap:.55rem;
+  transition:border-color .25s,transform .25s;
+}
+.latest-card:hover{border-color:var(--gold);transform:translateY(-3px)}
+.latest-card__eyebrow{
+  font-size:.68rem;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--gold);font-weight:600;
+}
+.latest-card__title{
+  font-family:'Fraunces',serif;font-weight:600;
+  font-size:1.25rem;line-height:1.25;
+}
+.latest-card__title a{color:var(--parchment);text-decoration:none;transition:color .2s}
+.latest-card__title a:hover,.latest-card__title a:focus-visible{color:var(--gold)}
+.latest-card__meta{font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--parchment-dim);font-weight:500}
+.latest-card__excerpt{color:var(--parchment-dim);font-size:.93rem;flex:1}
+.latest-card__cta{
+  color:var(--gold);text-decoration:none;font-weight:500;font-size:.86rem;letter-spacing:.04em;
+}
+.latest-card__cta:hover,.latest-card__cta:focus-visible{text-decoration:underline}
+.latest-card__loading{color:var(--parchment-dim);font-size:.9rem;font-style:italic}
+@media (max-width:700px){.latest__grid{grid-template-columns:1fr}}
 
 /* scroll reveal */
 .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
