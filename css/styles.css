@@ -45,7 +45,7 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
   border-bottom:1px solid var(--line);
 }
 .nav__logo img{height:34px;width:auto}
-.nav__links{display:flex;gap:.25rem;margin-left:auto;list-style:none;flex-wrap:wrap}
+.nav__links{display:flex;align-items:center;gap:.25rem;margin-left:auto;list-style:none;flex-wrap:wrap}
 .nav__links a{
   text-decoration:none;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;
   padding:.45rem .8rem;border-radius:999px;color:var(--parchment-dim);
@@ -65,7 +65,6 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
     font-size:.95rem;letter-spacing:.15em;
     padding:.55rem 1.15rem;
   }
-  .nav__links .nav__caret{font-size:.75em}
 }
 
 /* shows dropdown */
@@ -73,7 +72,8 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 /* invisible bridge so the pointer can cross the gap to the menu without it closing */
 .nav__dd::after{content:'';position:absolute;top:100%;left:0;right:0;height:.7rem}
 .nav__dd-btn{
-  display:flex;align-items:center;gap:.35rem;
+  display:flex;align-items:center;gap:.4rem;
+  margin:0;line-height:inherit;
   background:none;border:0;cursor:pointer;font-family:inherit;
   text-decoration:none;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;
   padding:.45rem .8rem;border-radius:999px;color:var(--parchment-dim);
@@ -81,7 +81,12 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 }
 .nav__dd-btn:hover,.nav__dd-btn:focus-visible{color:var(--parchment);background:rgba(242,235,224,.08)}
 .nav__dd-btn.is-active{color:var(--ink);background:var(--parchment)}
-.nav__caret{font-size:.7em;transition:transform .2s}
+.nav__caret{
+  font-size:0;width:0;height:0;
+  border-left:4px solid transparent;border-right:4px solid transparent;
+  border-top:5px solid currentColor;
+  transition:transform .2s;
+}
 .nav__dd.open .nav__caret{transform:rotate(180deg)}
 .nav__dd-menu{
   display:none;list-style:none;
