@@ -38,13 +38,13 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 .nav{
   position:fixed;top:0;left:0;right:0;z-index:100;
   display:flex;align-items:center;gap:1.5rem;
-  padding:.85rem 1.5rem;
+  padding:1.05rem 1.5rem;
   background:rgba(14,11,20,.82);
   backdrop-filter:blur(12px);
   -webkit-backdrop-filter:blur(12px);
   border-bottom:1px solid var(--line);
 }
-.nav__logo img{height:30px;width:auto}
+.nav__logo img{height:34px;width:auto}
 .nav__links{display:flex;gap:.25rem;margin-left:auto;list-style:none;flex-wrap:wrap}
 .nav__links a{
   text-decoration:none;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;
@@ -54,6 +54,18 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 }
 .nav__links a:hover,.nav__links a:focus-visible{color:var(--parchment);background:rgba(242,235,224,.08)}
 .nav__links a.is-active{color:var(--ink);background:var(--parchment)}
+
+/* desktop: centered, larger nav links (mobile keeps the hamburger panel) */
+@media (min-width:901px){
+  .nav__links{
+    position:absolute;left:50%;transform:translateX(-50%);margin-left:0;
+    gap:.6rem;
+  }
+  .nav__links a,.nav__dd-btn{
+    font-size:.95rem;letter-spacing:.15em;
+    padding:.55rem 1.15rem;
+  }
+}
 
 /* shows dropdown */
 .nav__dd{position:relative}
