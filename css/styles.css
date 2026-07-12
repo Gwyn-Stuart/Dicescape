@@ -327,6 +327,7 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
   transition:opacity .35s ease;
 }
 .card__frame img.alt{opacity:0;object-fit:contain;object-position:center bottom;background:radial-gradient(ellipse at 50% 30%, var(--glow), var(--ink-2) 75%);padding:.5rem .35rem 0}
+.card__frame img.alt[src*="gm-logo"]{object-position:center;padding:1.4rem 1rem}
 .card:hover .card__frame img.alt,.card:focus-within .card__frame img.alt{opacity:1}
 .card:hover .card__frame img.main,.card:focus-within .card__frame img.main{opacity:0}
 .card__player{margin-top:.85rem;font-weight:600;font-size:.95rem;letter-spacing:.02em}
