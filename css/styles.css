@@ -222,6 +222,12 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
   text-align:center;font-size:.78rem;letter-spacing:.06em;
   color:rgba(242,235,224,.45);margin-top:2.4rem;
 }
+.art-credit a,.team-hero__credit a{
+  color:inherit;text-decoration:underline;text-underline-offset:2px;
+  transition:color .2s;
+}
+.art-credit a:hover,.art-credit a:focus-visible,
+.team-hero__credit a:hover,.team-hero__credit a:focus-visible{color:var(--gold)}
 .worlds__grid{
   display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.6rem;
 }
