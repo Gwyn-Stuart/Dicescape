@@ -683,6 +683,7 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 /* ---------- MEDIA / PARTNERSHIP PAGE ---------- */
 .media{padding:9rem 1.5rem 5rem;background:radial-gradient(ellipse 85% 55% at 50% 0%,rgba(212,139,48,.12),transparent 65%),var(--ink)}
 .media__inner{max-width:980px;margin:0 auto}
+.media__mark{display:block;width:74px;height:74px;border-radius:50%;margin:0 auto 1.3rem;border:1px solid var(--line)}
 .media__eyebrow{font-size:.72rem;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);font-weight:600;text-align:center;margin-bottom:.8rem}
 .media__title{font-family:'Fraunces',serif;font-weight:800;font-size:clamp(1.9rem,5vw,3rem);text-align:center;margin-bottom:1rem}
 .media__lede{max-width:640px;margin:0 auto 2rem;text-align:center;color:var(--parchment-dim);font-size:1.05rem;line-height:1.65}
@@ -690,9 +691,8 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 .media h2{font-family:'Fraunces',serif;font-weight:800;font-size:clamp(1.4rem,3.4vw,2rem);text-align:center;margin:0 0 1.6rem}
 .offer-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:3.5rem}
 .offer{border:1px solid var(--line);border-radius:16px;background:var(--ink-2);padding:1.4rem 1.2rem}
-.offer__icon{font-size:1.3rem;margin-bottom:.5rem}
-.offer__name{font-weight:600;font-size:1rem;margin-bottom:.35rem}
-.offer__desc{color:var(--parchment-dim);font-size:.88rem;line-height:1.5}
+.offer__name{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:.5rem}
+.offer__desc{color:var(--parchment);font-size:.94rem;line-height:1.55}
 .stats{display:flex;justify-content:center;gap:3rem;flex-wrap:wrap;padding:1.8rem 1rem;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:rgba(242,235,224,.03);margin-bottom:3.5rem;text-align:center}
 .stat__num{font-family:'Fraunces',serif;font-weight:800;font-size:1.9rem;color:var(--gold)}
 .stat__label{font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:var(--parchment-dim);margin-top:.3rem}
