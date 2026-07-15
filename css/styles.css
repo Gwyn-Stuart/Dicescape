@@ -681,7 +681,12 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 @media (max-width:700px){.latest__grid{grid-template-columns:1fr}}
 
 /* ---------- MEDIA / PARTNERSHIP PAGE ---------- */
-.media{padding:9rem 1.5rem 5rem;background:radial-gradient(ellipse 85% 55% at 50% 0%,rgba(212,139,48,.12),transparent 65%),var(--ink)}
+.media{padding:9rem 1.5rem 5rem;background:
+  radial-gradient(ellipse 80% 50% at 50% -8%, rgba(212,139,48,.14), transparent 60%),
+  radial-gradient(ellipse 55% 40% at 92% 30%, rgba(155,89,255,.10), transparent 60%),
+  radial-gradient(ellipse 55% 40% at 6% 55%, rgba(127,180,255,.09), transparent 60%),
+  radial-gradient(ellipse 60% 45% at 85% 105%, rgba(24,255,98,.06), transparent 60%),
+  var(--ink)}
 .media__inner{max-width:980px;margin:0 auto}
 .media__mark{display:block;width:74px;height:74px;border-radius:50%;margin:0 auto 1.3rem;border:1px solid var(--line)}
 .media__eyebrow{font-size:.72rem;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);font-weight:600;text-align:center;margin-bottom:.8rem}
