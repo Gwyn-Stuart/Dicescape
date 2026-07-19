@@ -219,7 +219,7 @@ function renderList(posts){
       (p.date ? '<p class="post__date">' + escapeHTML(fmtDate(p.date)) + '</p>' : '') +
       '<h3 class="post__title"><a href="post.html?p=' + encodeURIComponent(p.slug) + '">' + escapeHTML(p.title) + '</a></h3>' +
       '<p class="post__body">' + escapeHTML(excerpt(text, 180)) + '</p>' +
-      '<a class="post__link" href="post.html?p=' + encodeURIComponent(p.slug) + '">Read post &rarr;</a>' +
+      '<a class="post__link" href="post.html?p=' + encodeURIComponent(p.slug) + '">Read Post &rarr;</a>' +
     '</article>';
   }).join('');
 }
@@ -319,7 +319,7 @@ function renderEpisodeList(data){
         (ep.duration ? '<span>' + escapeHTML(ep.duration) + '</span>' : '') + '</div>' +
       '<h2 class="ep-card__title">' + escapeHTML(ep.title) + '</h2>' +
       '<p class="ep-card__excerpt">' + escapeHTML(epExcerpt(notes, 170)) + '</p>' +
-      '<span class="ep-card__cta">Listen &amp; read more &rarr;</span>' +
+      '<span class="ep-card__cta">Listen &amp; Read More &rarr;</span>' +
     '</a>';
   }).join('');
 }
@@ -427,12 +427,12 @@ async function loadLatest(){
         '<h3 class="latest-card__title"><a href="episode.html?ep=' + encodeURIComponent(ep.id) + '">' + escapeHTML(ep.title) + '</a></h3>' +
         '<p class="latest-card__meta">' + escapeHTML(epDate(ep.date)) + (ep.duration ? ' &middot; ' + escapeHTML(ep.duration) : '') + '</p>' +
         '<p class="latest-card__excerpt">' + escapeHTML(epExcerpt(notes, 140)) + '</p>' +
-        '<a class="latest-card__cta" href="episode.html?ep=' + encodeURIComponent(ep.id) + '">Listen now &rarr;</a>';
+        '<a class="latest-card__cta" href="episode.html?ep=' + encodeURIComponent(ep.id) + '">Listen Now &rarr;</a>';
     } catch (err){
       epEl.innerHTML =
         '<p class="latest-card__eyebrow">Sirens of Sundown</p>' +
         '<h3 class="latest-card__title"><a href="episodes.html">Browse all episodes</a></h3>' +
-        '<a class="latest-card__cta" href="episodes.html">Episode archive &rarr;</a>';
+        '<a class="latest-card__cta" href="episodes.html">Episode Archive &rarr;</a>';
     }
   }
 
@@ -452,12 +452,12 @@ async function loadLatest(){
         '<h3 class="latest-card__title"><a href="post.html?p=' + encodeURIComponent(post.slug) + '">' + escapeHTML(post.title) + '</a></h3>' +
         '<p class="latest-card__meta">' + escapeHTML(fmtDate(post.date)) + '</p>' +
         '<p class="latest-card__excerpt">' + escapeHTML(excerpt(text, 140)) + '</p>' +
-        '<a class="latest-card__cta" href="post.html?p=' + encodeURIComponent(post.slug) + '">Read the post &rarr;</a>';
+        '<a class="latest-card__cta" href="post.html?p=' + encodeURIComponent(post.slug) + '">Read the Post &rarr;</a>';
     } catch (err){
       postEl.innerHTML =
         '<p class="latest-card__eyebrow">From the Blog</p>' +
         '<h3 class="latest-card__title"><a href="blog.html">News &amp; Updates</a></h3>' +
-        '<a class="latest-card__cta" href="blog.html">Visit the blog &rarr;</a>';
+        '<a class="latest-card__cta" href="blog.html">Visit the Blog &rarr;</a>';
     }
   }
 }
