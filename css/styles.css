@@ -169,6 +169,25 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
     var(--ink);
 }
 .hero__stars{position:absolute;inset:0;pointer-events:none;opacity:.55}
+
+/* collage hero */
+.hero--collage{
+  padding:0;min-height:0;display:block;
+  margin-top:64px;/* clears fixed nav */
+  border-bottom:1px solid var(--line);
+}
+.hero__collage{
+  display:block;width:100%;height:auto;
+  max-height:82vh;object-fit:cover;object-position:center;
+}
+.hero-intro{
+  padding:3rem 1.5rem 0;background:var(--ink);
+}
+.hero-intro .hero__blurb{margin:0 auto;position:static}
+@media (max-width:700px){
+  .hero__collage{max-height:none}
+  .hero-intro{padding-top:2.2rem}
+}
 .hero__logo{width:min(525px,80vw);margin-bottom:2.5rem;position:relative;filter:drop-shadow(0 6px 30px rgba(0,0,0,.5))}
 .hero h1{
   font-family:'Fraunces',serif;font-weight:800;
