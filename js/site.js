@@ -39,7 +39,12 @@ function cardFallback(img){
 }
 
 function handleFail(img){
-  if (img.closest('.card__frame')) cardFallback(img);
+  if (img.classList.contains('hero__art')) {
+    const hero = img.closest('.hero');
+    if (hero) hero.classList.add('hero--art-failed');
+    img.remove();
+  }
+  else if (img.closest('.card__frame')) cardFallback(img);
   else if (img.closest('.nav__logo, .hero, .footer, .world__head, .world-card')) logoFallback(img);
   else img.remove();
 }
