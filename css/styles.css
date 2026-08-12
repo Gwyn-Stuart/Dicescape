@@ -175,7 +175,14 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 .hero__art{
   position:absolute;inset:0;top:69px;/* clears the fixed nav */
   width:100%;height:calc(100% - 69px);
-  object-fit:cover;object-position:center top;
+  object-fit:contain;object-position:center top;
+}
+/* blurred self-fill behind the contained art so wide screens have no bars */
+.hero--art::before{
+  content:'';position:absolute;inset:69px 0 0;
+  background:url('../images/hero-collage.webp') center top/cover no-repeat;
+  filter:blur(28px) brightness(.5);
+  transform:scale(1.06);
 }
 .hero--art::after{
   content:'';position:absolute;inset:0;pointer-events:none;
@@ -196,6 +203,7 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 .hero--art .hero__title{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 /* if the collage fails to load, fall back to the glow hero */
 .hero--art-failed{justify-content:center}
+.hero--art-failed::before,
 .hero--art-failed::after{display:none}
 .hero--art-failed .hero__logo--mobile,
 .hero--art-failed .wordmark--hero{display:block}
@@ -205,6 +213,7 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 @media (max-width:760px),(max-aspect-ratio:6/5){
   .hero--art{justify-content:center;padding-bottom:4rem}
   .hero__art{display:none}
+  .hero--art::before,
   .hero--art::after{display:none}
   .hero__logo--mobile{display:block}
   .hero--art .wordmark--hero{display:block}
