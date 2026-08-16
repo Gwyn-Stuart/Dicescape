@@ -1,6 +1,6 @@
 :root{
-  --ink:#0e0b14;
-  --ink-2:#161021;
+  --ink:#000000;
+  --ink-2:#141414;
   --parchment:#f2ebe0;
   --parchment-dim:rgba(242,235,224,.68);
   --line:rgba(242,235,224,.14);
@@ -39,7 +39,7 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
   position:fixed;top:0;left:0;right:0;z-index:100;
   display:flex;align-items:center;gap:1.5rem;
   padding:1.05rem 1.5rem;
-  background:rgba(14,11,20,.82);
+  background:rgba(0,0,0,.82);
   backdrop-filter:blur(12px);
   -webkit-backdrop-filter:blur(12px);
   border-bottom:1px solid var(--line);
@@ -96,7 +96,7 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
   display:none;list-style:none;
   position:absolute;top:calc(100% + .5rem);left:50%;transform:translateX(-50%);
   min-width:220px;padding:.4rem;
-  background:rgba(14,11,20,.97);
+  background:rgba(0,0,0,.97);
   backdrop-filter:blur(12px);
   -webkit-backdrop-filter:blur(12px);
   border:1px solid var(--line);border-radius:14px;
@@ -135,7 +135,7 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
     display:none;
     position:absolute;top:100%;left:0;right:0;
     flex-direction:column;gap:0;margin-left:0;
-    background:rgba(14,11,20,.97);
+    background:rgba(0,0,0,.97);
     backdrop-filter:blur(12px);
     -webkit-backdrop-filter:blur(12px);
     border-bottom:1px solid var(--line);
@@ -187,16 +187,16 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 .hero--art::after{
   content:'';position:absolute;inset:0;pointer-events:none;
   background:linear-gradient(180deg,
-    rgba(14,11,20,.6) 0%,
-    rgba(14,11,20,.12) 20%,
-    rgba(14,11,20,.04) 52%,
-    rgba(14,11,20,.68) 82%,
+    rgba(0,0,0,.6) 0%,
+    rgba(0,0,0,.12) 20%,
+    rgba(0,0,0,.04) 52%,
+    rgba(0,0,0,.68) 82%,
     var(--ink) 100%);
 }
 .hero--art .hero__stars{z-index:2;opacity:.3}
 .hero--art .hero__blurb{
   position:relative;z-index:2;
-  text-shadow:0 2px 16px rgba(0,0,0,.9),0 0 40px rgba(14,11,20,.7);
+  text-shadow:0 2px 16px rgba(0,0,0,.9),0 0 40px rgba(0,0,0,.7);
 }
 .hero__logo--mobile{display:none}
 .hero--art .wordmark--hero{display:none}
@@ -208,18 +208,62 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 .hero--art-failed .hero__logo--mobile,
 .hero--art-failed .wordmark--hero{display:block}
 .hero--art-failed .hero__title{position:relative;width:auto;height:auto;margin:0;overflow:visible;clip:auto;white-space:normal}
-/* narrow / portrait viewports crop the collage badly, so they keep the
-   original glow hero; the collage is desktop / landscape only */
+/* mobile carousel: four vertical show panels, cross-fade with Ken Burns */
+.hero__slides{display:none}
 @media (max-width:760px),(max-aspect-ratio:6/5){
-  .hero--art{justify-content:center;padding-bottom:4rem}
+  .hero--art{
+    justify-content:flex-end;
+    padding:5rem 1.25rem 2.5rem;
+    overflow:hidden;
+  }
   .hero__art{display:none}
-  .hero--art::before,
-  .hero--art::after{display:none}
-  .hero__logo--mobile{display:block}
-  .hero--art .wordmark--hero{display:block}
-  .hero--art .hero__title{position:relative;width:auto;height:auto;margin:0;overflow:visible;clip:auto;white-space:normal}
-  .hero--art .hero__blurb{text-shadow:none}
-  .hero--art .hero__stars{opacity:.55}
+  .hero--art::before{display:none}
+  .hero--art::after{
+    display:block;
+    background:linear-gradient(180deg,
+      rgba(0,0,0,.5) 0%,
+      rgba(0,0,0,.1) 10%,
+      rgba(0,0,0,0) 22%,
+      rgba(0,0,0,0) 55%,
+      rgba(0,0,0,.55) 72%,
+      rgba(0,0,0,.9) 86%,
+      var(--ink) 100%);
+  }
+  .hero__slides{
+    display:block;position:absolute;inset:0;overflow:hidden;
+    background:var(--ink);
+  }
+  .hero__slide{
+    position:absolute;inset:0;width:100%;height:100%;
+    object-fit:cover;object-position:center 30%;
+    opacity:0;transform:scale(1.08);
+    animation:hero-slide 32s ease-in-out infinite;
+    will-change:opacity,transform;
+  }
+  .hero__slide:nth-child(1){animation-delay:0s}
+  .hero__slide:nth-child(2){animation-delay:-8s}
+  .hero__slide:nth-child(3){animation-delay:-16s}
+  .hero__slide:nth-child(4){animation-delay:-24s}
+  .hero--art .hero__stars{opacity:.35;z-index:2}
+  .hero__logo--mobile{display:none}
+  .hero--art .wordmark--hero{display:block;position:relative;z-index:3}
+  /* hide the gradient tagline on mobile — show art has its own titles */
+  .hero--art .hero__title{
+    position:absolute;width:1px;height:1px;margin:-1px;
+    overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;
+  }
+  .hero--art .hero__blurb{
+    position:relative;z-index:3;
+    text-shadow:0 2px 14px rgba(0,0,0,.95),0 0 32px rgba(0,0,0,.85);
+  }
+}
+@keyframes hero-slide{
+  0%    { opacity:0; transform:scale(1.08) }
+  6.25% { opacity:1; transform:scale(1.06) }
+  18.75%{ opacity:1; transform:scale(1.02) }
+  25%   { opacity:0; transform:scale(1) }
+  25.01%{ transform:scale(1.08) }
+  100%  { opacity:0; transform:scale(1.08) }
 }
 .hero__logo{width:min(525px,80vw);margin-bottom:2.5rem;position:relative;filter:drop-shadow(0 6px 30px rgba(0,0,0,.5))}
 .hero h1{
@@ -622,8 +666,8 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 .team-hero::before{
   content:'';position:absolute;inset:0;pointer-events:none;
   background:
-    linear-gradient(to bottom, rgba(14,11,20,.55) 0%, rgba(14,11,20,.15) 35%, rgba(14,11,20,.55) 70%, rgba(14,11,20,.96) 100%),
-    radial-gradient(ellipse 120% 100% at 50% 100%, transparent 50%, rgba(14,11,20,.5) 100%);
+    linear-gradient(to bottom, rgba(0,0,0,.55) 0%, rgba(0,0,0,.15) 35%, rgba(0,0,0,.55) 70%, rgba(0,0,0,.96) 100%),
+    radial-gradient(ellipse 120% 100% at 50% 100%, transparent 50%, rgba(0,0,0,.5) 100%);
 }
 .team-hero__overlay{
   position:absolute;left:0;right:0;bottom:2.2rem;text-align:center;padding:0 1.5rem;
@@ -791,5 +835,7 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
   html{scroll-behavior:auto}
   .reveal{opacity:1;transform:none;transition:none}
   .hero__scroll::after{animation:none}
+  .hero__slide{animation:none;opacity:0}
+  .hero__slide:nth-child(1){opacity:1;transform:none}
   *{transition-duration:.01ms !important}
 }
