@@ -170,8 +170,9 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 }
 .hero__stars{position:absolute;inset:0;pointer-events:none;opacity:.55}
 
-/* collage hero: hero container matches image aspect (2560:1656) below the
-   nav so cover fills edge-to-edge with no crop and no side bars */
+/* collage hero: hero container matches image aspect (2560:1656) so cover
+   fills edge-to-edge with no crop and no side bars. Mobile media query
+   below overrides the aspect for the vertical carousel. */
 .hero--art{
   justify-content:flex-end;padding-bottom:4.5rem;
   aspect-ratio:2560/1656;
@@ -214,7 +215,8 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
     padding:5rem 1.25rem 2.5rem;
     overflow:hidden;
     /* match image aspect exactly so cover fills edge-to-edge with no crop */
-    min-height:calc(100vw * 19.5 / 9);
+    aspect-ratio:9/19.5;
+    min-height:100svh;
   }
   .hero__art{display:none}
   .hero--art::before{display:none}
