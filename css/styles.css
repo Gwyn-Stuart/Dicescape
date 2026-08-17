@@ -170,19 +170,17 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 }
 .hero__stars{position:absolute;inset:0;pointer-events:none;opacity:.55}
 
-/* collage hero (variant B: full-bleed stripe collage) */
-.hero--art{justify-content:flex-end;padding-bottom:4.5rem}
-.hero__art{
-  position:absolute;inset:0;top:69px;/* clears the fixed nav */
-  width:100%;height:calc(100% - 69px);
-  object-fit:contain;object-position:center top;
+/* collage hero: hero container matches image aspect (2560:1656) below the
+   nav so cover fills edge-to-edge with no crop and no side bars */
+.hero--art{
+  justify-content:flex-end;padding-bottom:4.5rem;
+  aspect-ratio:2560/1656;
+  min-height:100svh;
 }
-/* blurred self-fill behind the contained art so wide screens have no bars */
-.hero--art::before{
-  content:'';position:absolute;inset:69px 0 0;
-  background:url('../images/hero-collage.webp') center top/cover no-repeat;
-  filter:blur(28px) brightness(.5);
-  transform:scale(1.06);
+.hero__art{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  object-fit:cover;object-position:center center;
 }
 .hero--art::after{
   content:'';position:absolute;inset:0;pointer-events:none;
