@@ -280,17 +280,6 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
   font-size:1.06rem;color:var(--parchment-dim);
 }
 .hero__blurb strong{color:var(--parchment);font-weight:500}
-.hero__scroll{
-  position:absolute;bottom:1.6rem;left:50%;transform:translateX(-50%);
-  font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;color:var(--parchment-dim);
-  text-decoration:none;
-}
-.hero__scroll::after{
-  content:'';display:block;width:1px;height:34px;margin:.6rem auto 0;
-  background:linear-gradient(var(--parchment-dim),transparent);
-  animation:drip 2.2s ease-in-out infinite;
-}
-@keyframes drip{0%,100%{transform:scaleY(.4);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}}
 
 /* ---------- ABOUT STRIP ---------- */
 .about{
@@ -833,7 +822,6 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   .reveal{opacity:1;transform:none;transition:none}
-  .hero__scroll::after{animation:none}
   .hero__slide{animation:none;opacity:0}
   .hero__slide:nth-child(1){opacity:1;transform:none}
   *{transition-duration:.01ms !important}
