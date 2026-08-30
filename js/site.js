@@ -54,7 +54,7 @@ document.querySelectorAll('img').forEach(img => {
   else img.addEventListener('error', () => handleFail(img), { once: true });
 });
 
-// ---------- Blog (runs only on blog.html / post.html) ----------
+// ---------- Blog (runs only on /blog/ and /post/) ----------
 // Posts come from Sanity. We keep escapeHTML, slugify, withSlugs, and
 // excerpt as shared helpers, and convert Sanity's rich-text "Portable
 // Text" body into safe HTML for display.
@@ -226,9 +226,9 @@ function renderList(posts){
     const text = blocksToText(p.body);
     return '<article class="post">' +
       (p.date ? '<p class="post__date">' + escapeHTML(fmtDate(p.date)) + '</p>' : '') +
-      '<h3 class="post__title"><a href="post.html?p=' + encodeURIComponent(p.slug) + '">' + escapeHTML(p.title) + '</a></h3>' +
+      '<h3 class="post__title"><a href="/post/?p=' + encodeURIComponent(p.slug) + '">' + escapeHTML(p.title) + '</a></h3>' +
       '<p class="post__body">' + escapeHTML(excerpt(text, 180)) + '</p>' +
-      '<a class="post__link" href="post.html?p=' + encodeURIComponent(p.slug) + '">Read Post &rarr;</a>' +
+      '<a class="post__link" href="/post/?p=' + encodeURIComponent(p.slug) + '">Read Post &rarr;</a>' +
     '</article>';
   }).join('');
 }
@@ -323,7 +323,7 @@ function renderEpisodeList(data){
   list.innerHTML = data.episodes.map(ep => {
     const num = ep.episodeNumber ? '<span class="ep-card__num">Ep ' + escapeHTML(ep.episodeNumber) + '</span>' : '';
     const { notes } = splitContentWarnings(ep.description);
-    return '<a class="ep-card" href="episode.html?ep=' + encodeURIComponent(ep.id) + '">' +
+    return '<a class="ep-card" href="/episode/?ep=' + encodeURIComponent(ep.id) + '">' +
       '<div class="ep-card__meta">' + num + '<span>' + escapeHTML(epDate(ep.date)) + '</span>' +
         (ep.duration ? '<span>' + escapeHTML(ep.duration) + '</span>' : '') + '</div>' +
       '<h2 class="ep-card__title">' + escapeHTML(ep.title) + '</h2>' +
@@ -338,7 +338,7 @@ function renderSingleEpisode(data){
   const id = new URLSearchParams(location.search).get('ep');
   const ep = data && data.episodes && data.episodes.find(e => e.id === id);
   if (!ep){
-    el.innerHTML = '<p class="blog__empty">That episode could not be found. <a class="post__link" href="episodes.html">See all episodes &rarr;</a></p>';
+    el.innerHTML = '<p class="blog__empty">That episode could not be found. <a class="post__link" href="/episodes/">See all episodes &rarr;</a></p>';
     return;
   }
   document.title = ep.title + ' | Sirens of Sundown';
@@ -433,15 +433,15 @@ async function loadLatest(){
       const { notes } = splitContentWarnings(ep.description);
       epEl.innerHTML =
         '<p class="latest-card__eyebrow">Latest Episode &middot; Sirens of Sundown</p>' +
-        '<h3 class="latest-card__title"><a href="episode.html?ep=' + encodeURIComponent(ep.id) + '">' + escapeHTML(ep.title) + '</a></h3>' +
+        '<h3 class="latest-card__title"><a href="/episode/?ep=' + encodeURIComponent(ep.id) + '">' + escapeHTML(ep.title) + '</a></h3>' +
         '<p class="latest-card__meta">' + escapeHTML(epDate(ep.date)) + (ep.duration ? ' &middot; ' + escapeHTML(ep.duration) : '') + '</p>' +
         '<p class="latest-card__excerpt">' + escapeHTML(epExcerpt(notes, 140)) + '</p>' +
-        '<a class="latest-card__cta" href="episode.html?ep=' + encodeURIComponent(ep.id) + '">Listen Now &rarr;</a>';
+        '<a class="latest-card__cta" href="/episode/?ep=' + encodeURIComponent(ep.id) + '">Listen Now &rarr;</a>';
     } catch (err){
       epEl.innerHTML =
         '<p class="latest-card__eyebrow">Sirens of Sundown</p>' +
-        '<h3 class="latest-card__title"><a href="episodes.html">Browse all episodes</a></h3>' +
-        '<a class="latest-card__cta" href="episodes.html">Episode Archive &rarr;</a>';
+        '<h3 class="latest-card__title"><a href="/episodes/">Browse all episodes</a></h3>' +
+        '<a class="latest-card__cta" href="/episodes/">Episode Archive &rarr;</a>';
     }
   }
 
@@ -458,15 +458,15 @@ async function loadLatest(){
       const text = blocksToText(post.body);
       postEl.innerHTML =
         '<p class="latest-card__eyebrow">From the Blog</p>' +
-        '<h3 class="latest-card__title"><a href="post.html?p=' + encodeURIComponent(post.slug) + '">' + escapeHTML(post.title) + '</a></h3>' +
+        '<h3 class="latest-card__title"><a href="/post/?p=' + encodeURIComponent(post.slug) + '">' + escapeHTML(post.title) + '</a></h3>' +
         '<p class="latest-card__meta">' + escapeHTML(fmtDate(post.date)) + '</p>' +
         '<p class="latest-card__excerpt">' + escapeHTML(excerpt(text, 140)) + '</p>' +
-        '<a class="latest-card__cta" href="post.html?p=' + encodeURIComponent(post.slug) + '">Read the Post &rarr;</a>';
+        '<a class="latest-card__cta" href="/post/?p=' + encodeURIComponent(post.slug) + '">Read the Post &rarr;</a>';
     } catch (err){
       postEl.innerHTML =
         '<p class="latest-card__eyebrow">From the Blog</p>' +
-        '<h3 class="latest-card__title"><a href="blog.html">News &amp; Updates</a></h3>' +
-        '<a class="latest-card__cta" href="blog.html">Visit the Blog &rarr;</a>';
+        '<h3 class="latest-card__title"><a href="/blog/">News &amp; Updates</a></h3>' +
+        '<a class="latest-card__cta" href="/blog/">Visit the Blog &rarr;</a>';
     }
   }
 }
