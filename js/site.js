@@ -115,7 +115,11 @@ function blocksToHTML(blocks){
       active.forEach(mk => {
         const def = marks.find(d => d._key === mk);
         if (def && def._type === 'link' && def.href){
-          const safe = /^(https?:|mailto:)/i.test(def.href) ? def.href : '#';
+          let safe = (def.href || '').trim();
+          if (!safe) safe = '#';
+          else if (/^(https?:|mailto:|tel:|#|\/|\?)/i.test(safe)) { /* allowed as-is */ }
+          else if (/^[a-z][a-z0-9+.-]*:/i.test(safe)) safe = '#'; /* unknown scheme, reject */
+          else safe = 'https://' + safe; /* bare host or path, assume https */
           text = '<a href="' + escapeHTML(safe) + '" target="_blank" rel="noopener">' + text + '</a>';
         }
       });
